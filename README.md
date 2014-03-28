@@ -1,5 +1,6 @@
-slugid - Compressed UUIDs for Node.js
+slugid - Compressed UUIDs for Node.js 
 =====================================
+[![Build Status](https://travis-ci.org/jonasfj/slugid.svg?branch=master)](https://travis-ci.org/jonasfj/slugid)
 
 A node.js module for generating UUIDs and encode them in URL-safe base64
 (See [RFC 4648 sec. 5](http://tools.ietf.org/html/rfc4648#section-5)).
