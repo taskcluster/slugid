@@ -1,0 +1,20 @@
+{
+  "name":         "slugid",
+  "version":      "0.0.0",
+  "author":       "Jonas Finnemann Jensen <jopsen@gmail.com>",
+  "description":  "URL-safe base64 UUID encoder for generating 22 character slugs",
+  "license":      "MIT",
+  "scripts": {
+    "test":   "nodeunit slugid_test.js"
+  },
+  "repository": {
+    "type":   "git",
+    "url":    "https://github.com/jonasfj/slugid.git"
+  },
+  "dependencies": {
+    "uuid":                             "1.4.1"
+  },
+  "devDependencies": {
+    "nodeunit":                         "0.8.6"
+  }
+}
