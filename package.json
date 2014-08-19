@@ -1,6 +1,6 @@
 {
   "name":         "slugid",
-  "version":      "1.0.1",
+  "version":      "1.0.2",
   "author":       "Jonas Finnemann Jensen <jopsen@gmail.com>",
   "description":  "URL-safe base64 UUID encoder for generating 22 character slugs",
   "license":      "MIT",
