@@ -9,7 +9,7 @@
   },
   "repository": {
     "type":   "git",
-    "url":    "https://github.com/jonasfj/slugid.git"
+    "url":    "https://github.com/taskcluster/slugid.git"
   },
   "dependencies": {
     "uuid":                             "1.4.1"
