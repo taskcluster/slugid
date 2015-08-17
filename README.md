@@ -6,14 +6,14 @@ slugid - Compressed UUIDs for Node.js
 
 A node.js module for generating v4 UUIDs and encoding them in URL-safe base64
 (see [RFC 4648 sec. 5](http://tools.ietf.org/html/rfc4648#section-5)). The
-url-safe base64 encoded uuid string is stripped of `=` padding and then
-reversed, in order that it does not begin with a `-` character. This is useful
-if the slugids might be used as command line arguments, to avoid being
-interpreted as parameters.
+url-safe base64 encoded uuid string is stripped of `=` padding. Slugs that
+begin with the `-` character are discarded, and a new slug is generated.  This
+is useful if the slugids might be used as command line arguments, to avoid
+being interpreted as parameters.
 
 The compressed UUIDs are always **22 characters** on the following form
 `[A-Za-z0-9_-]{22}`, or more specifically
-`[AQgw][A-Za-z0-9_-]{10}[CGKOSWaeimquy26-][A-Za-z0-9_-][Q-T][A-Za-z0-9_-]{8}`
+`[A-Za-z0-9_-]{8}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][AQgw][A-Za-z0-9_-]{10}`
 due to the fixed value of 6 of the 128 bits, as defined in RFC 4122.
 
 ```js

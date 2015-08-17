@@ -29,7 +29,7 @@ exports.encodeTest = function(test) {
 
   // Base64 of this contains +, / and =
   var uid = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
-  var expectedSlug = "AVHGe1676-JawSL_Ny_8Eg"
+  var expectedSlug = "gE8_yN_LSwaJ-6761eGHVA";
 
   // Encode
   var actualSlug = slugid.encode(uid);
@@ -121,13 +121,16 @@ exports.randomSpreadTest = function(test) {
   // characters at that position. The allowed characters are determined by the
   // schema shown in the test comments above.
   var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
+  // if a slug is generated which begins with '-' it is dismissed, so we need
+  // to remove it from permutations of first character
+  var charsFirst = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".split('').sort().join('');
   // 16, 17, 18, 19: 0100xx
   var charsB = "QRST".split('').sort().join('');
   // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: xxxx10
   var charsC = "CGKOSWaeimquy26-".split('').sort().join('');
   // 0, 16, 32, 48: xx0000
   var charsD = "AQgw".split('').sort().join('');
-  expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsB, charsAll, charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD].reverse(); // reverse
+  expected = [charsFirst, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsB, charsAll, charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD];
 
   test.expect(1);
 

@@ -29,15 +29,13 @@ exports.encode = function(uuid_) {
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
-              .replace(/=/g,  '')   // Drop '==' padding
-              .split('').reverse().join(''); // Reverse to avoid leading '-'
+              .replace(/=/g,  '');  // Drop '==' padding
   return slug;
 };
 
 /** Decode 22 byte slug to uuid */
 exports.decode = function(slug) {
   var base64 = slug
-                  .split('').reverse().join('')
                   .replace(/-/g, '+')
                   .replace(/_/g, '/')
                   + '==';
@@ -48,10 +46,13 @@ exports.decode = function(slug) {
 exports.v4 = function() {
   var bytes   = uuid.v4(null, new Buffer(16));
   var base64  = bytes.toString('base64');
+  while (base64.substring(0, 1) == "+") {
+    bytes   = uuid.v4(null, new Buffer(16));
+    base64  = bytes.toString('base64');
+  }
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
-              .replace(/=/g,  '')   // Drop '==' padding
-              .split('').reverse().join(''); // Reverse to avoid leading '-'
+              .replace(/=/g,  '');  // Drop '==' padding
   return slug;
 };
