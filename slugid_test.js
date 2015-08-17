@@ -23,18 +23,18 @@
 var slugid  = require('./slugid');
 var uuid    = require('uuid');
 
-// Test that we can encode something which results in a slug containing both '-' and '_'
+// Test that we can encode something which results in a slug containing '-' and '_' and no '='
 exports.encodeTest = function(test) {
   test.expect(1);
 
-  // Base64 of this one has / and +
+  // Base64 of this contains +, / and =
   var uid = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
   var expectedSlug = "AVHGe1676-JawSL_Ny_8Eg"
 
   // Encode
   var actualSlug = slugid.encode(uid);
 
-  // Test that it doesn't contain bad things
+  // Test that it encoded correctly
   test.ok(expectedSlug == actualSlug, "Slug not correctly encoded: '" + expectedSlug + "' != '" + actualSlug + "'")
 
   test.done()
