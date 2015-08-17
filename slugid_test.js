@@ -98,12 +98,12 @@ exports.slugDecodeEncodeTest = function(test) {
 // schema:
 //      <..........time_low............><...time_mid...><time_hi_+_vers><clk_hi><clk_lo><.....................node.....................>
 //
-// bin: ................................................0100............10..............................................................0000
-//
-// hex: .   .   .   .   .   .   .   .   .   .   .   . - 4   .   .   . - $A  .   .   . - .   .   .   .   .   .   .   .   .   .   .   .
+// bin: ................................................0100............10xx............................................................0000
+// hex: <00><01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $A <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
 // => $A in {'8', '9', 'A', 'B'} (0b10xx)
 //
-// b64: .     .     .     .     .     .     .     .     $B    .     $C    .     .     .     .     .     .     .     .     .     .     $D
+// bin: ................................................0100xx......xxxx10............................................................xx0000
+// b64: < 00 >< 01 >< 02 >< 03 >< 04 >< 05 >< 06 >< 07 >  $B  < 09 >  $C  < 11 >< 12 >< 13 >< 14 >< 15 >< 16 >< 17 >< 18 >< 19 >< 20 >  $D
 // => $B in {'Q', 'R', 'S', 'T'} (0b0100xx)
 // => $C in {'C', 'G', 'K', 'O', 'S', 'W', 'a', 'e', 'i', 'm', 'q', 'u', 'y', '2', '6', '-'} (0bxxxx10)
 // => $D in {'A', 'Q', 'g', 'w'} (0bxx0000)
@@ -127,7 +127,7 @@ exports.randomSpreadTest = function(test) {
   var charsC = "CGKOSWaeimquy26-".split('').sort().join('');
   // 0, 16, 32, 48: xx0000
   var charsD = "AQgw".split('').sort().join('');
-  expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsB, charsAll, charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD].reverse();
+  expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsB, charsAll, charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD].reverse(); // reverse
 
   test.expect(1);
 
