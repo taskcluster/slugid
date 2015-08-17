@@ -13,7 +13,7 @@ being interpreted as parameters.
 
 The compressed UUIDs are always **22 characters** on the following form
 `[A-Za-z0-9_-]{22}`, or more specifically
-`[A-Za-z0-9_-]{8}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][AQgw][A-Za-z0-9_-]{10}`
+`[A-Za-z0-9_][A-Za-z0-9_-]{7}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][A-Za-z0-9_-]{10}[AQgw]`
 due to the fixed value of 6 of the 128 bits, as defined in RFC 4122.
 
 ```js
