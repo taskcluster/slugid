@@ -115,7 +115,7 @@ exports.randomSpreadTest = function(test) {
   // in the large sample of slugids generated in this test.
   var k = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
 
-  // We generate an array (`expected`) of all possible allows characters per
+  // We generate an array (`expected`) of all possible allowed characters per
   // position in the slugid. The array has 22 members, one for each position in
   // the slugid. Each entry is a lexicographically sorted string of the valid
   // characters at that position. The allowed characters are determined by the
