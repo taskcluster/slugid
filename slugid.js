@@ -22,7 +22,10 @@
 
 var uuid = require('uuid');
 
-/** Encode uuid as a short 22 byte slug */
+/** Returns the given uuid as a 22 character slug, potentially with leading `-`
+ * character. It is recommended to generate slugs using v4() function which
+ * guarantees that the returned slug will not lead with the `-` character,
+ * which can be dangerous if used as a command line argument. */
 exports.encode = function(uuid_) {
   var bytes   = uuid.parse(uuid_);
   var base64  = (new Buffer(bytes)).toString('base64');
@@ -33,7 +36,8 @@ exports.encode = function(uuid_) {
   return slug;
 };
 
-/** Decode 22 byte slug to uuid */
+/** Returns the uuid represented by the given slug. Slugs with leading `-` are
+ * allowed but not recommended, in order to be backwardly compatible. */
 exports.decode = function(slug) {
   var base64 = slug
                   .replace(/-/g, '+')
@@ -42,12 +46,13 @@ exports.decode = function(slug) {
   return uuid.unparse(new Buffer(base64, 'base64'));
 };
 
-/** Generate a v4 (random) uuid and encode it to a slug */
+/** Returns a randomly generated uuid v4 complaint slug guaranteed not to have
+ * a leading `-` character */
 exports.v4 = function() {
   do {
     var bytes   = uuid.v4(null, new Buffer(16));
     var base64  = bytes.toString('base64');
-  } while (base64.substring(0, 1) == "+");
+  } while (/^\+/.test(base64));  // disallow leading '-' ('+' => '-' below)
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
