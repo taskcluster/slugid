@@ -29,7 +29,7 @@ exports.encode = function(uuid_) {
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
-              .replace(/=/g,  '');  // Drop '==' padding
+              .substring(0, 22);    // Drop '==' padding
   return slug;
 };
 
@@ -44,15 +44,13 @@ exports.decode = function(slug) {
 
 /** Generate a v4 (random) uuid and encode it to a slug */
 exports.v4 = function() {
-  var bytes   = uuid.v4(null, new Buffer(16));
-  var base64  = bytes.toString('base64');
-  while (base64.substring(0, 1) == "+") {
-    bytes   = uuid.v4(null, new Buffer(16));
-    base64  = bytes.toString('base64');
-  }
+  do {
+    var bytes   = uuid.v4(null, new Buffer(16));
+    var base64  = bytes.toString('base64');
+  } while (base64.substring(0, 1) == "+");
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
-              .replace(/=/g,  '');  // Drop '==' padding
+              .substring(0, 22);    // Drop '==' padding
   return slug;
 };
