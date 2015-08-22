@@ -52,7 +52,7 @@ exports.v4 = function() {
   do {
     var bytes   = uuid.v4(null, new Buffer(16));
     var base64  = bytes.toString('base64');
-  } while (/^\+/.test(base64));  // disallow leading '-' ('+' => '-' below)
+  } while (base64[0] == '+');  // disallow leading '-' ('+' => '-' below)
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
