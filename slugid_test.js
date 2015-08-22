@@ -93,12 +93,14 @@ exports.slugDecodeEncodeTest = function(test) {
 // e.g. from this we can see 'j' represents 35 in base64
 //
 // The following comments show the 128 bits of the v4 uuid in binary, hex and base 64 encodings.
-// The 6 fixed bits are shown among the 122 arbitrary value bits (represented by '.').
+// The 6 fixed bits (`0`/`1`) are shown among the 122 arbitrary value bits (`.`/`x`). The `x`
+// means the same as `.` but just highlights which bits are grouped together for the respective
+// encoding.
 //
 // schema:
 //      <..........time_low............><...time_mid...><time_hi_+_vers><clk_hi><clk_lo><.....................node.....................>
 //
-// bin: ................................................0100............10xx............................................................0000
+// bin: ................................................0100............10xx............................................................
 // hex: <00><01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $A <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
 // => $A in {'8', '9', 'A', 'B'} (0b10xx)
 //
