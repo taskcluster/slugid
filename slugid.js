@@ -52,7 +52,7 @@ exports.decode = function(slug) {
   return uuid.unparse(new Buffer(base64, 'base64'));
 };
 
-/** Returns a randomly generated uuid v4 complaint slug guaranteed to begin
+/** Returns a randomly generated uuid v4 compliant slug guaranteed to begin
  * with [A-Za-f] */
 exports.v4 = function() {
   var bytes   = uuid.v4(null, new Buffer(16));
