@@ -4,17 +4,21 @@ slugid - Compressed UUIDs for Node.js
 [![Build Status](https://travis-ci.org/taskcluster/slugid.svg?branch=master)](http://travis-ci.org/taskcluster/slugid)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/taskcluster/slugid/blob/master/LICENSE)
 
-A node.js module for generating v4 UUIDs and encoding them in URL-safe base64
-(see [RFC 4648 sec. 5](http://tools.ietf.org/html/rfc4648#section-5)). The
-url-safe base64 encoded uuid string is stripped of `=` padding. Slugs that
-begin with the `-` character are discarded, and a new slug is generated.  This
-is useful if the slugids might be used as command line arguments, to avoid
-being interpreted as parameters.
+A node.js module for generating v4 UUIDs and encoding them into 22 character
+URL-safe base64 slug representation (see [RFC 4648 sec.
+5](http://tools.ietf.org/html/rfc4648#section-5)). The first (most significant)
+bit of the generated uuid is unset, the result is url-safe base64 encoded, and
+then stripped of `=` padding. By unsetting the most significant bit of the
+uuid, it is ensured that the resulting slug begins with (`[A-Za-f])` and not
+`[g-z0-9_-]`. This is primarily useful if the slugid is to be used in a context
+where a non-letter first character might cause problems, such as when used as a
+command line argument, where a leading `-` character could cause a problem.
 
-The compressed UUIDs are always **22 characters** on the following form
-`[A-Za-z0-9_-]{22}`, or more specifically
-`[A-Za-z0-9_][A-Za-z0-9_-]{7}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][A-Za-z0-9_-]{10}[AQgw]`
-due to the fixed value of 6 of the 128 bits, as defined in RFC 4122.
+Generated slugs take the form `[A-Za-z0-9_-]{22}`, or more precisely
+`[A-Za-f][A-Za-z0-9_-]{7}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][A-Za-z0-9_-]{10}[AQgw]`
+due to the fixed value of six of the 128 bits as required by RFC 4122, and the
+fixed first bit detailed above. Generated slugids therefore have 121 bits of
+entropy, one less than their uuid v4 counterparts.
 
 ```js
 var slugid = require('slugid');

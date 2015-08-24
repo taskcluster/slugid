@@ -23,42 +23,72 @@
 var slugid  = require('./slugid');
 var uuid    = require('uuid');
 
-// Test that we can encode something which results in a slug containing '-' and '_' and no '='
+// Test that we can correctly encode an "old style" uuid (with first bit set)
+// to its known slug. Before version 1.1.0 of this library, uuids used for
+// slugs could have their most significant bit set. This test guarantees
+// encoding such uuids is still supported for backwards compatibility. In
+// addition, the uuid was chosen since it has a slug with both `-` and `_`
+// characters.
 exports.encodeTest = function(test) {
   test.expect(1);
 
-  // Base64 of this contains +, / and =
-  var uid = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
+  // 10000000010011110011111111001000110111111100101101001011000001101000100111111011101011101111101011010101111000011000011101010100....
+  // <8 ><0 ><4 ><f ><3 ><f ><c ><8 ><d ><f ><c ><b ><4 ><b ><0 ><6 ><8 ><9 ><f ><b ><a ><e ><f ><a ><d ><5 ><e ><1 ><8 ><7 ><5 ><4 >
+  // < g  >< E  >< 8  >< _  >< y  >< N  >< _  >< L  >< S  >< w  >< a  >< J  >< -  >< 6  >< 7  >< 6  >< 1  >< e  >< G  >< H  >< V  >< A  >
+  var uuid = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
   var expectedSlug = "gE8_yN_LSwaJ-6761eGHVA";
 
   // Encode
-  var actualSlug = slugid.encode(uid);
+  var actualSlug = slugid.encode(uuid);
 
   // Test that it encoded correctly
-  test.ok(expectedSlug == actualSlug, "Slug not correctly encoded: '" + expectedSlug + "' != '" + actualSlug + "'")
+  test.ok(expectedSlug == actualSlug, "UUID not correctly encoded into slug: '" + expectedSlug + "' != '" + actualSlug + "'");
 
-  test.done()
+  test.done();
 };
 
+// Test that we can decode an "old style" slug that begins with `-`. Before
+// version 1.1.0 of this library, uuids used for slugs could have their most
+// significant bit set. This test guarantees decoding such slugs is still
+// supported for backwards compatibility.
+exports.decodeTest = function(test) {
+  test.expect(1);
+
+  // 11111011111011111011111011111011111011111011111001000011111011111011111111111111111111111111111111111111111111111111111111111101....
+  // <f ><b ><e ><f ><b ><e ><f ><b ><e ><f ><b ><e ><4 ><3 ><e ><f ><b ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><d >
+  // < -  >< -  >< -  >< -  >< -  >< -  >< -  >< -  >< Q  >< -  >< -  >< -  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< Q  >
+  var slug = '--------Q--__________Q';
+  var expectedUuid = "fbefbefb-efbe-43ef-bfff-fffffffffffd";
+
+  // Decode
+  var actualUuid = slugid.decode(slug);
+
+  // Test that it is decoded correctly
+  test.ok(expectedUuid == actualUuid, "Slug not correctly decoded into uuid: '" + expectedUuid + "' != '" + actualUuid + "'");
+
+  test.done();
+}
+
 // Test that 100 uuids are unchanged after encoding and then decoding them
-exports.uidEncodeDecodeTest = function(test) {
+exports.uuidEncodeDecodeTest = function(test) {
   test.expect(100);
 
   for (i = 0; i < 100; i++) {
     // Generate uuid
-    var uid = uuid.v4();
+    var uuid_ = uuid.v4();
 
     // Encode
-    var slug = slugid.encode(uid);
+    var slug = slugid.encode(uuid_);
 
     // Test that decode uuid matches original
-    test.ok(slugid.decode(slug) == uid, "Encode and decode isn't identity");
+    test.ok(slugid.decode(slug) == uuid_, "Encode and decode isn't identity");
   }
 
   test.done();
 };
 
-// Test that 100 slugs are unchanged after decoding and then encoding them
+// Test that 100 "new-stlye" slugs are unchanged after decoding and then
+// encoding them.
 exports.slugDecodeEncodeTest = function(test) {
   test.expect(100);
 
@@ -67,10 +97,10 @@ exports.slugDecodeEncodeTest = function(test) {
     var slug1 = slugid.v4();
 
     // Decode
-    var uid = slugid.decode(slug1);
+    var uuid_ = slugid.decode(slug1);
 
     // Encode
-    var slug2 = slugid.encode(uid);
+    var slug2 = slugid.encode(uuid_);
 
     // Test that decode uuid matches original
     test.ok(slug1 == slug2, "Decode and encode isn't identity");
@@ -79,11 +109,11 @@ exports.slugDecodeEncodeTest = function(test) {
   test.done();
 };
 
-// Test: Make sure that all allowed characters can appear in all allowed places...
-// In this test we generate over a thousand slugids, and make sure that every
-// possible allowed character per position appears at least once in the sample of
-// all slugids generated. We also make sure that no other characters appear in
-// positions in which they are not allowed.
+// Test: Make sure that all allowed characters can appear in all allowed
+// places...  In this test we generate over a thousand slugids, and make sure
+// that every possible allowed character per position appears at least once in
+// the sample of all slugids generated. We also make sure that no other
+// characters appear in positions in which they are not allowed.
 //
 // base 64 encoding char -> value:
 // ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_
@@ -92,23 +122,25 @@ exports.slugDecodeEncodeTest = function(test) {
 //
 // e.g. from this we can see 'j' represents 35 in base64
 //
-// The following comments show the 128 bits of the v4 uuid in binary, hex and base 64 encodings.
-// The 6 fixed bits (`0`/`1`) are shown among the 122 arbitrary value bits (`.`/`x`). The `x`
-// means the same as `.` but just highlights which bits are grouped together for the respective
-// encoding.
+// The following comments show the 128 bits of the v4 uuid in binary, hex and
+// base 64 encodings.  The 6 fixed bits (`0`/`1`) are shown among the 122
+// arbitrary value bits (`.`/`x`). The `x` means the same as `.` but just
+// highlights which bits are grouped together for the respective encoding.
 //
 // schema:
 //      <..........time_low............><...time_mid...><time_hi_+_vers><clk_hi><clk_lo><.....................node.....................>
 //
-// bin: ................................................0100............10xx............................................................
-// hex: <00><01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $A <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
-// => $A in {'8', '9', 'A', 'B'} (0b10xx)
+// bin: 0xxx............................................0100............10xx............................................................
+// hex:  $A <01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $B <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
+// => $A in {0, 1, 2, 3, 4, 5, 6, 7} (0b0xxx)
+// => $B in {8, 9, A, B} (0b10xx)
 //
-// bin: ................................................0100xx......xxxx10............................................................xx0000
-// b64: < 00 >< 01 >< 02 >< 03 >< 04 >< 05 >< 06 >< 07 >  $B  < 09 >  $C  < 11 >< 12 >< 13 >< 14 >< 15 >< 16 >< 17 >< 18 >< 19 >< 20 >  $D
-// => $B in {'Q', 'R', 'S', 'T'} (0b0100xx)
-// => $C in {'C', 'G', 'K', 'O', 'S', 'W', 'a', 'e', 'i', 'm', 'q', 'u', 'y', '2', '6', '-'} (0bxxxx10)
-// => $D in {'A', 'Q', 'g', 'w'} (0bxx0000)
+// bin: 0xxxxx..........................................0100xx......xxxx10............................................................xx0000
+// b64:   $C  < 01 >< 02 >< 03 >< 04 >< 05 >< 06 >< 07 >  $D  < 09 >  $E  < 11 >< 12 >< 13 >< 14 >< 15 >< 16 >< 17 >< 18 >< 19 >< 20 >  $F
+// => $C in {A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f} (0b0xxxxx)
+// => $D in {Q, R, S, T} (0b0100xx)
+// => $E in {C, G, K, O, S, W, a, e, i, m, q, u, y, 2, 6, -} (0bxxxx10)
+// => $F in {A, Q, g, w} (0bxx0000)
 exports.randomSpreadTest = function(test) {
   // k records which characters were found at which positions. It has one entry
   // per slugid character, therefore 22 entries. Each entry is an object with
@@ -123,16 +155,15 @@ exports.randomSpreadTest = function(test) {
   // characters at that position. The allowed characters are determined by the
   // schema shown in the test comments above.
   var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
-  // if a slug is generated which begins with '-' it is dismissed, so we need
-  // to remove it from permutations of first character
-  var charsFirst = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".split('').sort().join('');
-  // 16, 17, 18, 19: 0100xx
-  var charsB = "QRST".split('').sort().join('');
-  // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: xxxx10
-  var charsC = "CGKOSWaeimquy26-".split('').sort().join('');
-  // 0, 16, 32, 48: xx0000
-  var charsD = "AQgw".split('').sort().join('');
-  expected = [charsFirst, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsB, charsAll, charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD];
+  // 0 - 31: 0b0xxxxx
+  var charsC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef".split('').sort().join('');
+  // 16, 17, 18, 19: 0b0100xx
+  var charsD = "QRST".split('').sort().join('');
+  // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: 0bxxxx10
+  var charsE = "CGKOSWaeimquy26-".split('').sort().join('');
+  // 0, 16, 32, 48: 0bxx0000
+  var charsF = "AQgw".split('').sort().join('');
+  expected = [charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
 
   test.expect(1);
 

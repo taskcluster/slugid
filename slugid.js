@@ -22,10 +22,15 @@
 
 var uuid = require('uuid');
 
-/** Returns the given uuid as a 22 character slug, potentially with leading `-`
- * character. It is recommended to generate slugs using v4() function which
- * guarantees that the returned slug will not lead with the `-` character,
- * which can be dangerous if used as a command line argument. */
+/** Returns the given uuid as a 22 character slug. Please note that since
+ * slugid version 1.1.0, slugs are generated from uuids with the most
+ * significant bit set to 0, meaning that newly generated slugs begin with
+ * [A-Za-f]. Prior to 1.1.0, slugs could begin with [A-Za-z0-9_-]. This method
+ * allows uuids with the first bit set, for backwards compatibility, and
+ * therefore resulting slugids may also begin with [g-z0-9_-]. It is however
+ * recommended to generate slugs using v4() function which guarantees that the
+ * returned slug will begin with `[A-Za-f]`, which can safely be used as a
+ * command line argument. */
 exports.encode = function(uuid_) {
   var bytes   = uuid.parse(uuid_);
   var base64  = (new Buffer(bytes)).toString('base64');
@@ -36,8 +41,9 @@ exports.encode = function(uuid_) {
   return slug;
 };
 
-/** Returns the uuid represented by the given slug. Slugs with leading `-` are
- * allowed but not recommended, in order to be backwardly compatible. */
+/** Returns the uuid represented by the given slug. Slugs beginning with
+ * [g-z0-9_-] are allowed but not recommended, in order to be backwardly
+ * compatible with this library prior to version 1.1.0. */
 exports.decode = function(slug) {
   var base64 = slug
                   .replace(/-/g, '+')
@@ -46,13 +52,12 @@ exports.decode = function(slug) {
   return uuid.unparse(new Buffer(base64, 'base64'));
 };
 
-/** Returns a randomly generated uuid v4 complaint slug guaranteed not to have
- * a leading `-` character */
+/** Returns a randomly generated uuid v4 complaint slug guaranteed to begin
+ * with [A-Za-f] */
 exports.v4 = function() {
-  do {
-    var bytes   = uuid.v4(null, new Buffer(16));
-    var base64  = bytes.toString('base64');
-  } while (base64[0] == '+');  // disallow leading '-' ('+' => '-' below)
+  var bytes   = uuid.v4(null, new Buffer(16));
+  bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
+  var base64  = bytes.toString('base64');
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
