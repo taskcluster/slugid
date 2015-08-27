@@ -1,6 +1,6 @@
 {
   "name":         "slugid",
-  "version":      "1.0.3",
+  "version":      "1.1.0",
   "author":       "Jonas Finnemann Jensen <jopsen@gmail.com>",
   "description":  "URL-safe base64 UUID encoder for generating 22 character slugs",
   "license":      "MIT",
@@ -9,10 +9,10 @@
   },
   "repository": {
     "type":   "git",
-    "url":    "https://github.com/jonasfj/slugid.git"
+    "url":    "https://github.com/taskcluster/slugid.git"
   },
   "dependencies": {
-    "uuid":                             "1.4.1"
+    "uuid":                             "^2.0.1"
   },
   "devDependencies": {
     "nodeunit":                         "0.8.6",
