@@ -12,7 +12,7 @@
     "url":    "https://github.com/taskcluster/slugid.git"
   },
   "dependencies": {
-    "uuid":                             "1.4.1"
+    "uuid":                             "^2.0.1"
   },
   "devDependencies": {
     "nodeunit":                         "0.8.6",
