@@ -23,12 +23,11 @@
 var slugid  = require('./slugid');
 var uuid    = require('uuid');
 
-// Test that we can correctly encode an "old style" uuid (with first bit set)
-// to its known slug. Before version 1.1.0 of this library, uuids used for
-// slugs could have their most significant bit set. This test guarantees
-// encoding such uuids is still supported for backwards compatibility. In
-// addition, the uuid was chosen since it has a slug with both `-` and `_`
-// characters.
+/**
+ * Test that we can correctly encode a "non-nice" uuid (with first bit set) to
+ * its known slug. The specific uuid was chosen since it has a slug which
+ * contains both `-` and `_` characters.
+ */
 exports.encodeTest = function(test) {
   test.expect(1);
 
@@ -47,10 +46,10 @@ exports.encodeTest = function(test) {
   test.done();
 };
 
-// Test that we can decode an "old style" slug that begins with `-`. Before
-// version 1.1.0 of this library, uuids used for slugs could have their most
-// significant bit set. This test guarantees decoding such slugs is still
-// supported for backwards compatibility.
+/**
+ * Test that we can decode a "non-nice" slug (first bit of uuid is set) that
+ * begins with `-`
+ */
 exports.decodeTest = function(test) {
   test.expect(1);
 
@@ -69,7 +68,9 @@ exports.decodeTest = function(test) {
   test.done();
 }
 
-// Test that 100 uuids are unchanged after encoding and then decoding them
+/**
+ * Test that 100 v4 uuids are unchanged after encoding and then decoding them
+ */
 exports.uuidEncodeDecodeTest = function(test) {
   test.expect(100);
 
@@ -87,8 +88,9 @@ exports.uuidEncodeDecodeTest = function(test) {
   test.done();
 };
 
-// Test that 100 "new-stlye" slugs are unchanged after decoding and then
-// encoding them.
+/**
+ * Test that 100 v4 slugs are unchanged after decoding and then encoding them.
+ */
 exports.slugDecodeEncodeTest = function(test) {
   test.expect(100);
 
@@ -109,51 +111,45 @@ exports.slugDecodeEncodeTest = function(test) {
   test.done();
 };
 
-// Test: Make sure that all allowed characters can appear in all allowed
-// places...  In this test we generate over a thousand slugids, and make sure
-// that every possible allowed character per position appears at least once in
-// the sample of all slugids generated. We also make sure that no other
-// characters appear in positions in which they are not allowed.
-//
-// base 64 encoding char -> value:
-// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_
-// 0         1         2         3         4         5          6
-// 0123456789012345678901234567890123456789012345678901234567890123
-//
-// e.g. from this we can see 'j' represents 35 in base64
-//
-// The following comments show the 128 bits of the v4 uuid in binary, hex and
-// base 64 encodings.  The 6 fixed bits (`0`/`1`) are shown among the 122
-// arbitrary value bits (`.`/`x`). The `x` means the same as `.` but just
-// highlights which bits are grouped together for the respective encoding.
-//
-// schema:
-//      <..........time_low............><...time_mid...><time_hi_+_vers><clk_hi><clk_lo><.....................node.....................>
-//
-// bin: 0xxx............................................0100............10xx............................................................
-// hex:  $A <01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $B <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
-// => $A in {0, 1, 2, 3, 4, 5, 6, 7} (0b0xxx)
-// => $B in {8, 9, A, B} (0b10xx)
-//
-// bin: 0xxxxx..........................................0100xx......xxxx10............................................................xx0000
-// b64:   $C  < 01 >< 02 >< 03 >< 04 >< 05 >< 06 >< 07 >  $D  < 09 >  $E  < 11 >< 12 >< 13 >< 14 >< 15 >< 16 >< 17 >< 18 >< 19 >< 20 >  $F
-// => $C in {A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f} (0b0xxxxx)
-// => $D in {Q, R, S, T} (0b0100xx)
-// => $E in {C, G, K, O, S, W, a, e, i, m, q, u, y, 2, 6, -} (0bxxxx10)
-// => $F in {A, Q, g, w} (0bxx0000)
-exports.randomSpreadTest = function(test) {
-  // k records which characters were found at which positions. It has one entry
-  // per slugid character, therefore 22 entries. Each entry is an object with
-  // a property for each character found, where the value of that property is
-  // the number of times that character appeared at that position in the slugid
-  // in the large sample of slugids generated in this test.
-  var k = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
-
-  // We generate an array (`expected`) of all possible allowed characters per
-  // position in the slugid. The array has 22 members, one for each position in
-  // the slugid. Each entry is a lexicographically sorted string of the valid
-  // characters at that position. The allowed characters are determined by the
-  // schema shown in the test comments above.
+/**
+ * Test: Make sure that all allowed characters can appear in all allowed
+ * positions within the "nice" slug. In this test we generate over a thousand
+ * slugids, and make sure that every possible allowed character per position
+ * appears at least once in the sample of all slugids generated. We also make
+ * sure that no other characters appear in positions in which they are not
+ * allowed.
+ *
+ * base 64 encoding char -> value:
+ * ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_
+ * 0         1         2         3         4         5          6
+ * 0123456789012345678901234567890123456789012345678901234567890123
+ *
+ * e.g. from this we can see 'j' represents 35 in base64
+ *
+ * The following comments show the 128 bits of the v4 uuid in binary, hex and
+ * base 64 encodings. The 6 fixed bits (`0`/`1`) according to RFC 4122, plus
+ * the first (most significant) fixed bit (`0`) are shown among the 121
+ * arbitrary value bits (`.`/`x`). The `x` means the same as `.` but just
+ * highlights which bits are grouped together for the respective encoding.
+ *
+ * schema:
+ *      <..........time_low............><...time_mid...><time_hi_+_vers><clk_hi><clk_lo><.....................node.....................>
+ *
+ * bin: 0xxx............................................0100............10xx............................................................
+ * hex:  $A <01><02><03><04><05><06><07><08><09><10><11> 4  <13><14><15> $B <17><18><19><20><21><22><23><24><25><26><27><28><29><30><31>
+ *
+ * => $A in {0, 1, 2, 3, 4, 5, 6, 7} (0b0xxx)
+ * => $B in {8, 9, A, B} (0b10xx)
+ *
+ * bin: 0xxxxx..........................................0100xx......xxxx10............................................................xx0000
+ * b64:   $C  < 01 >< 02 >< 03 >< 04 >< 05 >< 06 >< 07 >  $D  < 09 >  $E  < 11 >< 12 >< 13 >< 14 >< 15 >< 16 >< 17 >< 18 >< 19 >< 20 >  $F
+ *
+ * => $C in {A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f} (0b0xxxxx)
+ * => $D in {Q, R, S, T} (0b0100xx)
+ * => $E in {C, G, K, O, S, W, a, e, i, m, q, u, y, 2, 6, -} (0bxxxx10)
+ * => $F in {A, Q, g, w} (0bxx0000)
+ */
+exports.niceSpreadTest = function(test) {
   var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
   // 0 - 31: 0b0xxxxx
   var charsC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef".split('').sort().join('');
@@ -164,6 +160,52 @@ exports.randomSpreadTest = function(test) {
   // 0, 16, 32, 48: 0bxx0000
   var charsF = "AQgw".split('').sort().join('');
   expected = [charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
+  spreadTest(
+    test,
+    function() {
+      return slugid.nice();
+    },
+    expected
+  );
+}
+
+/**
+ * This test is the same as niceSpreadTest but for slugid.v4() rather than
+ * slugid.nice(). The only difference is that a v4() slug can start with any of
+ * the base64 characters since the first six bits of the uuid are random.
+ */
+exports.v4SpreadTest = function(test) {
+  var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
+  // 16, 17, 18, 19: 0b0100xx
+  var charsD = "QRST".split('').sort().join('');
+  // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: 0bxxxx10
+  var charsE = "CGKOSWaeimquy26-".split('').sort().join('');
+  // 0, 16, 32, 48: 0bxx0000
+  var charsF = "AQgw".split('').sort().join('');
+  expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
+  spreadTest(
+    test,
+    function() {
+      return slugid.v4();
+    },
+    expected
+  );
+}
+
+/**
+ * `spreadTest` runs a test against the `generator` function, to check that
+ * when calling it 64*40 times, the range of characters per string position it
+ * returns matches the array `expected`, where each entry in `expected` is a
+ * string of all possible characters that should appear in that position in the
+ * string, at least once in the sample of 64*40 responses from the `generator`
+ * function */
+function spreadTest(test, generator, expected) {
+  // k records which characters were found at which positions. It has one entry
+  // per slugid character, therefore 22 entries. Each entry is an object with
+  // a property for each character found, where the value of that property is
+  // the number of times that character appeared at that position in the slugid
+  // in the large sample of slugids generated in this test.
+  var k = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
 
   test.expect(1);
 
@@ -172,7 +214,7 @@ exports.randomSpreadTest = function(test) {
   // iterations, no failure occurred in 1000 simulations, so 64 * 40 should be
   // suitably large to rule out false positives.
   for (i = 0; i < 64 * 40; i++) {
-    var slug = slugid.v4();
+    var slug = generator();
     for (j = 0; j < slug.length; j++) {
       if (k[j][slug.charAt(j)] === undefined) {
         k[j][slug.charAt(j)] = 1
@@ -200,6 +242,9 @@ exports.randomSpreadTest = function(test) {
   test.done();
 }
 
+/**
+ * `arraysEqual` checks arrays `a` and `b` for equality
+ */
 function arraysEqual(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;

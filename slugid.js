@@ -22,15 +22,10 @@
 
 var uuid = require('uuid');
 
-/** Returns the given uuid as a 22 character slug. Please note that since
- * slugid version 1.1.0, slugs are generated from uuids with the most
- * significant bit set to 0, meaning that newly generated slugs begin with
- * [A-Za-f]. Prior to 1.1.0, slugs could begin with [A-Za-z0-9_-]. This method
- * allows uuids with the first bit set, for backwards compatibility, and
- * therefore resulting slugids may also begin with [g-z0-9_-]. It is however
- * recommended to generate slugs using v4() function which guarantees that the
- * returned slug will begin with `[A-Za-f]`, which can safely be used as a
- * command line argument. */
+/**
+ * Returns the given uuid as a 22 character slug. This can be a regular v4
+ * slug or a "nice" slug.
+ */
 exports.encode = function(uuid_) {
   var bytes   = uuid.parse(uuid_);
   var base64  = (new Buffer(bytes)).toString('base64');
@@ -41,9 +36,9 @@ exports.encode = function(uuid_) {
   return slug;
 };
 
-/** Returns the uuid represented by the given slug. Slugs beginning with
- * [g-z0-9_-] are allowed but not recommended, in order to be backwardly
- * compatible with this library prior to version 1.1.0. */
+/**
+ * Returns the uuid represented by the given v4 or "nice" slug
+ */
 exports.decode = function(slug) {
   var base64 = slug
                   .replace(/-/g, '+')
@@ -52,9 +47,31 @@ exports.decode = function(slug) {
   return uuid.unparse(new Buffer(base64, 'base64'));
 };
 
-/** Returns a randomly generated uuid v4 compliant slug guaranteed to begin
- * with [A-Za-f] */
+/**
+ * Returns a randomly generated uuid v4 compliant slug
+ */
 exports.v4 = function() {
+  var bytes   = uuid.v4(null, new Buffer(16));
+  var base64  = bytes.toString('base64');
+  var slug = base64
+              .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
+              .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
+              .substring(0, 22);    // Drop '==' padding
+  return slug;
+};
+
+/** 
+ * Returns a randomly generated uuid v4 compliant slug which conforms to a set
+ * of "nice" properties, at the cost of some entropy. Currently this means one
+ * extra fixed bit (the first bit of the uuid is set to 0) which guarantees the
+ * slug will begin with [A-Za-f]. For example such slugs don't require special
+ * handling when used as command line parameters (whereas non-nice slugs may
+ * start with `-` which can confuse command line tools).
+ *
+ * Potentially other "nice" properties may be added in future to further
+ * restrict the range of potential uuids that may be generated.
+ */
+exports.nice = function() {
   var bytes   = uuid.v4(null, new Buffer(16));
   bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
   var base64  = bytes.toString('base64');
