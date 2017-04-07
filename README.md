@@ -1,6 +1,7 @@
 slugid - Compressed UUIDs for Node.js 
 =====================================
 <img src="https://tools.taskcluster.net/lib/assets/taskcluster-120.png" />
+
 [![Build Status](https://travis-ci.org/taskcluster/slugid.svg?branch=master)](http://travis-ci.org/taskcluster/slugid)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/taskcluster/slugid/blob/master/LICENSE)
 
@@ -9,6 +10,9 @@ URL-safe base64 slug representation (see [RFC 4648 sec.
 5](http://tools.ietf.org/html/rfc4648#section-5)).
 
 Slugs are url-safe base64 encoded v4 uuids, stripped of base64 `=` padding.
+They are generated with the [uuid package](https://www.npmjs.com/package/uuid) which
+is careful to use a cryptographically strong random number generator on platforms
+that make one available.
 
 There are two methods for generating slugs - `slugid.v4()` and `slugid.nice()`.
 
