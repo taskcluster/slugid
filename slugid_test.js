@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-var slugid  = require('./slugid');
-var uuid    = require('uuid');
+var slugid = require('./slugid');
+var uuidv4 = require('uuid/v4');
 
 /**
  * Test that we can correctly encode a "non-nice" uuid (with first bit set) to
@@ -76,7 +76,7 @@ exports.uuidEncodeDecodeTest = function(test) {
 
   for (i = 0; i < 100; i++) {
     // Generate uuid
-    var uuid_ = uuid.v4();
+    var uuid_ = uuidv4();
 
     // Encode
     var slug = slugid.encode(uuid_);
