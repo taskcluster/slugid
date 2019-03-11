@@ -1,6 +1,6 @@
-slugid - Compressed UUIDs for Node.js 
-=====================================
-<img src="https://tools.taskcluster.net/lib/assets/taskcluster-120.png" />
+<img align="right" src="http://media.taskcluster.net/logo/logo-96x120.png" />
+
+# slugid - Compressed UUIDs for Node.js 
 
 [![Build Status](https://travis-ci.org/taskcluster/slugid.svg?branch=master)](http://travis-ci.org/taskcluster/slugid)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/taskcluster/slugid/blob/master/LICENSE)
