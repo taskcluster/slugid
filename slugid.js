@@ -28,7 +28,7 @@ var uuid = require('uuid');
  */
 exports.encode = function(uuid_) {
   var bytes   = uuid.parse(uuid_);
-  var base64  = (new Buffer(bytes)).toString('base64');
+  var base64  = Buffer.from(bytes).toString('base64');
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
@@ -44,14 +44,14 @@ exports.decode = function(slug) {
                   .replace(/-/g, '+')
                   .replace(/_/g, '/')
                   + '==';
-  return uuid.stringify(new Buffer(base64, 'base64'));
+  return uuid.stringify(Buffer.from(base64, 'base64'));
 };
 
 /**
  * Returns a randomly generated uuid v4 compliant slug
  */
 exports.v4 = function() {
-  var bytes   = uuid.v4(null, new Buffer(16));
+  var bytes   = uuid.v4(null, Buffer.alloc(16));
   var base64  = bytes.toString('base64');
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
@@ -72,7 +72,7 @@ exports.v4 = function() {
  * restrict the range of potential uuids that may be generated.
  */
 exports.nice = function() {
-  var bytes   = uuid.v4(null, new Buffer(16));
+  var bytes   = uuid.v4(null, Buffer.alloc(16));
   bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
   var base64  = bytes.toString('base64');
   var slug = base64
