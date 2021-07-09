@@ -12,11 +12,10 @@
     "url": "https://github.com/taskcluster/slugid.git"
   },
   "dependencies": {
-    "uuid": "^3.2.1",
-    "uuid-parse": "^1.0.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "nodeunit": "^0.11.2",
-    "browserify": "5.9.1"
+    "browserify": "5.9.1",
+    "nodeunit": "^0.11.2"
   }
 }

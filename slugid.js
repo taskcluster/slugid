@@ -20,15 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-var uuidv4 = require('uuid/v4');
-var uuidParse = require('uuid-parse');
+var uuid = require('uuid');
 
 /**
  * Returns the given uuid as a 22 character slug. This can be a regular v4
  * slug or a "nice" slug.
  */
 exports.encode = function(uuid_) {
-  var bytes   = uuidParse.parse(uuid_);
+  var bytes   = uuid.parse(uuid_);
   var base64  = (new Buffer(bytes)).toString('base64');
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
@@ -45,14 +44,14 @@ exports.decode = function(slug) {
                   .replace(/-/g, '+')
                   .replace(/_/g, '/')
                   + '==';
-  return uuidParse.unparse(new Buffer(base64, 'base64'));
+  return uuid.stringify(new Buffer(base64, 'base64'));
 };
 
 /**
  * Returns a randomly generated uuid v4 compliant slug
  */
 exports.v4 = function() {
-  var bytes   = uuidv4(null, new Buffer(16));
+  var bytes   = uuid.v4(null, new Buffer(16));
   var base64  = bytes.toString('base64');
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
@@ -73,7 +72,7 @@ exports.v4 = function() {
  * restrict the range of potential uuids that may be generated.
  */
 exports.nice = function() {
-  var bytes   = uuidv4(null, new Buffer(16));
+  var bytes   = uuid.v4(null, new Buffer(16));
   bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
   var base64  = bytes.toString('base64');
   var slug = base64

@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 var slugid = require('./slugid');
-var uuidv4 = require('uuid/v4');
+var uuidv4 = require('uuid').v4;
 
 /**
  * Test that we can correctly encode a "non-nice" uuid (with first bit set) to
