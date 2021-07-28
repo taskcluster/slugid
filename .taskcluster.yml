@@ -12,9 +12,6 @@ tasks:
       then: ${event.pull_request.head.repo.html_url}
       else: ${event.repository.html_url}
     environments:
-      - image: node:4
-        description: Run tests with node v4
-        override-command: node4
       - image: node:6
         description: Run tests with node v6
       - image: node:8
@@ -47,36 +44,17 @@ tasks:
           maxRunTime: 3600
           image: ${env.image}
           command:
-            $switch:
-              env["override-command"] == null:
-                # Default: run tests with npm test, omit git progress
-                - /bin/bash
-                - '--login'
-                - '-c'
-                - >-
-                  set -o xtrace &&
-                  git --version &&
-                  node -v &&
-                  npm -v &&
-                  git clone --no-progress ${repository} repo &&
-                  cd repo &&
-                  git config advice.detachedHead false &&
-                  git checkout --no-progress ${head_rev} &&
-                  npm install --no-progress . &&
-                  npm test
-              env["override-command"] == "node4":
-                # git version 2.1.4 does not have --no-progress
-                - /bin/bash
-                - '--login'
-                - '-c'
-                - >-
-                  set -o xtrace &&
-                  git --version &&
-                  node -v &&
-                  npm -v &&
-                  git clone ${repository} repo &&
-                  cd repo &&
-                  git config advice.detachedHead false &&
-                  git checkout ${head_rev} &&
-                  npm install --no-progress . &&
-                  npm test
+            - /bin/bash
+            - '--login'
+            - '-c'
+            - >-
+              set -o xtrace &&
+              git --version &&
+              node -v &&
+              npm -v &&
+              git clone --no-progress ${repository} repo &&
+              cd repo &&
+              git config advice.detachedHead false &&
+              git checkout --no-progress ${head_rev} &&
+              npm install --no-progress . &&
+              npm test
