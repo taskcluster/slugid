@@ -1,0 +1,60 @@
+version: 1
+policy:
+  pullRequests: public
+tasks:
+  $let:
+    head_rev:
+      $if: tasks_for == "github-pull-request"
+      then: ${event.pull_request.head.sha}
+      else: ${event.after}
+    repository:
+      $if: tasks_for == "github-pull-request"
+      then: ${event.pull_request.head.repo.html_url}
+      else: ${event.repository.html_url}
+    environments:
+      - image: node:6
+        description: Run tests with node v6
+      - image: node:8
+        description: Run tests with node v8
+      - image: node:10
+        description: Run tests with node v10
+      - image: node:12
+        description: Run tests with node v12
+      - image: node:14
+        description: Run tests with node v14
+      - image: node:16
+        description: Run tests with node v16
+      - image: node:latest
+        description: Run tests with latest node
+  in:
+    $if: tasks_for == "github-pull-request" && event["action"] in ["opened","reopened","synchronize"]
+    then:
+      $map: {$eval: environments}
+      each(env):
+        taskId: {$eval: as_slugid(env.image + ":tests")}
+        deadline:
+          $fromNow: 1 day
+        taskQueueId: proj-taskcluster/ci
+        metadata:
+          name: ${env.image} tests
+          description: ${env.description}
+          owner: ${event.sender.login}@users.noreply.github.com
+          source: ${event.repository.url}
+        payload:
+          maxRunTime: 3600
+          image: ${env.image}
+          command:
+            - /bin/bash
+            - '--login'
+            - '-c'
+            - >-
+              set -o xtrace &&
+              git --version &&
+              node -v &&
+              npm -v &&
+              git clone --no-progress ${repository} repo &&
+              cd repo &&
+              git config advice.detachedHead false &&
+              git checkout --no-progress ${head_rev} &&
+              npm install --no-progress . &&
+              npm test
