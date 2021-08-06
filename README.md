@@ -1,9 +1,6 @@
 <img align="right" src="http://media.taskcluster.net/logo/logo-96x120.png" />
 
-# slugid - Compressed UUIDs for Node.js 
-
-[![Build Status](https://travis-ci.org/taskcluster/slugid.svg?branch=main)](http://travis-ci.org/taskcluster/slugid)
-[![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/taskcluster/slugid/blob/main/LICENSE)
+# slugid - Compressed UUIDs for Node.js
 
 A node.js module for generating v4 UUIDs and encoding them into 22 character
 URL-safe base64 slug representation (see [RFC 4648 sec.
