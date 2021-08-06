@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.com/taskcluster/slugid.git"
   },
+  "bugs": {
+    "url": "https://github.com/taskcluster/slugid/issues"
+  },
   "dependencies": {
     "uuid": "^8.3.2"
   },
