@@ -5,7 +5,7 @@
   "description": "URL-safe base64 UUID encoder for generating 22 character slugs",
   "license": "MIT",
   "scripts": {
-    "test": "nodeunit slugid_test.js"
+    "test": "nodeunit slugid_test.js && NO_BUFFER=1 nodeunit slugid_test.js"
   },
   "repository": {
     "type": "git",
