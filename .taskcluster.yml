@@ -23,6 +23,7 @@ tasks:
         command: npm test
       - image: node:12
         description: Run tests with node v12
+        command: npm test
       - image: node:14
         command: npm test
         description: Run tests with node v14
