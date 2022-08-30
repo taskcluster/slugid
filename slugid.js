@@ -27,7 +27,7 @@ const toBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (bytes) => Buffer.from(bytes).toString('base64');
   }
-  return (bytes) => globalThis.btoa(String.fromCharCode(...bytes));
+  return (bytes) => btoa(String.fromCharCode(...bytes));
 })();
 
 /** @type {(base64: string) => Uint8Array | Buffer} */
@@ -35,7 +35,7 @@ const fromBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (base64) => Buffer.from(base64, 'base64');
   }
-  return (base64) => Uint8Array.from(globalThis.atob(base64), c => c.charCodeAt(0));
+  return (base64) => Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 })();
 
 /**
