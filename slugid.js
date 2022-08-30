@@ -24,16 +24,16 @@ var uuid = require('uuid');
 
 /** @type {(bytes: Uint8Array) => string} */
 const toBase64 = (() => {
-  if (globalThis.Buffer) {
-    return (bytes) => globalThis.Buffer.from(bytes).toString('base64');
+  if (typeof Buffer !== 'undefined') {
+    return (bytes) => Buffer.from(bytes).toString('base64');
   }
   return (bytes) => btoa(String.fromCharCode(...bytes));
 })();
 
 /** @type {(base64: string) => Uint8Array | Buffer} */
 const fromBase64 = (() => {
-  if (globalThis.Buffer) {
-    return (base64) => globalThis.Buffer.from(base64, 'base64');
+  if (typeof Buffer !== 'undefined') {
+    return (base64) => Buffer.from(base64, 'base64');
   }
   return (base64) => Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 })();
