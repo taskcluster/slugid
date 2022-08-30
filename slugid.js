@@ -23,7 +23,7 @@
 var uuid = require('uuid');
 
 /** @type {(bytes: Uint8Array) => string} */
-const toBase64 = (() => {
+var toBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (bytes) => Buffer.from(bytes).toString('base64');
   }
@@ -31,7 +31,7 @@ const toBase64 = (() => {
 })();
 
 /** @type {(base64: string) => Uint8Array | Buffer} */
-const fromBase64 = (() => {
+var fromBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (base64) => Buffer.from(base64, 'base64');
   }
