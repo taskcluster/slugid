@@ -22,8 +22,8 @@
 
 // Allows the tests to be run in environments with and without `Buffer`.
 if (process.env.NO_BUFFER === "1") {
-  console.log('Removing `Buffer` from globalThis...');
   delete global.Buffer;
+  console.log('\x1b[33m' + 'Removed `Buffer` from globalThis.' + '\x1b[0m');
 }
 
 var slugid = require('./slugid');
