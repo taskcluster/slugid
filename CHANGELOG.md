@@ -1,5 +1,9 @@
 # Changelog for slugid
 
+## v3.1.0 (2022-09-05)
+
+* Buffer usage is [optional](https://github.com/taskcluster/slugid/pull/24) for browsers 
+
 ## v3.0.0 (2021-08-06)
 
 * Drop support for node 4 (Node v6.17.1 is the earliest tested release)
