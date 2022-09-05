@@ -22,13 +22,29 @@
 
 var uuid = require('uuid');
 
+/** @type {(bytes: Uint8Array) => string} */
+var toBase64 = (() => {
+  if (typeof Buffer !== 'undefined') {
+    return (bytes) => Buffer.from(bytes).toString('base64');
+  }
+  return (bytes) => btoa(String.fromCharCode(...bytes));
+})();
+
+/** @type {(base64: string) => Uint8Array | Buffer} */
+var fromBase64 = (() => {
+  if (typeof Buffer !== 'undefined') {
+    return (base64) => Buffer.from(base64, 'base64');
+  }
+  return (base64) => Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+})();
+
 /**
  * Returns the given uuid as a 22 character slug. This can be a regular v4
  * slug or a "nice" slug.
  */
 exports.encode = function(uuid_) {
   var bytes   = uuid.parse(uuid_);
-  var base64  = Buffer.from(bytes).toString('base64');
+  var base64 = toBase64(bytes);
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
@@ -44,15 +60,15 @@ exports.decode = function(slug) {
                   .replace(/-/g, '+')
                   .replace(/_/g, '/')
                   + '==';
-  return uuid.stringify(Buffer.from(base64, 'base64'));
+  return uuid.stringify(fromBase64(base64));
 };
 
 /**
  * Returns a randomly generated uuid v4 compliant slug
  */
 exports.v4 = function() {
-  var bytes   = uuid.v4(null, Buffer.alloc(16));
-  var base64  = bytes.toString('base64');
+  var bytes   = uuid.v4(null, new Uint8Array(16));
+  var base64 = toBase64(bytes);
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
@@ -72,9 +88,9 @@ exports.v4 = function() {
  * restrict the range of potential uuids that may be generated.
  */
 exports.nice = function() {
-  var bytes   = uuid.v4(null, Buffer.alloc(16));
+  var bytes   = uuid.v4(null, new Uint8Array(16));
   bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
-  var base64  = bytes.toString('base64');
+  var base64 = toBase64(bytes);
   var slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)

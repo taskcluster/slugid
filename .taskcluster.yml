@@ -14,18 +14,28 @@ tasks:
     environments:
       - image: node:6
         description: Run tests with node v6
+        command: npm test
       - image: node:8
         description: Run tests with node v8
+        command: npm test
       - image: node:10
         description: Run tests with node v10
+        command: npm test
       - image: node:12
         description: Run tests with node v12
+        command: npm test
       - image: node:14
         description: Run tests with node v14
+        command: npm test
       - image: node:16
         description: Run tests with node v16
+        command: npm test
       - image: node:latest
         description: Run tests with latest node
+        command: npm test
+      - image: node:latest
+        description: Run tests with latest node without Buffer
+        command: npm run test-nobuffer
   in:
     $if: tasks_for == "github-pull-request" && event["action"] in ["opened","reopened","synchronize"]
     then:
@@ -57,4 +67,4 @@ tasks:
               git config advice.detachedHead false &&
               git checkout --no-progress ${head_rev} &&
               npm install --no-progress . &&
-              npm test
+              ${env.command}

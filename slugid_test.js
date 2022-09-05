@@ -20,6 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// Allows the tests to be run in environments with and without `Buffer`.
+if (process.env.NO_BUFFER === "1") {
+  delete global.Buffer;
+  console.log('\x1b[33m' + 'Removed `Buffer` from globalThis.' + '\x1b[0m');
+}
+
 var slugid = require('./slugid');
 var uuidv4 = require('uuid').v4;
 
