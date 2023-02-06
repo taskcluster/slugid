@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/taskcluster/slugid.git"
   },
+  "types": "index.d.ts",
   "bugs": {
     "url": "https://github.com/taskcluster/slugid/issues"
   },
