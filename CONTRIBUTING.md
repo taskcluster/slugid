@@ -25,4 +25,3 @@ Welcome to the team!
 [bestpractices]: https://docs.taskcluster.net/docs/manual/design/devel/best-practices
 [testing]: https://docs.taskcluster.net/docs/manual/design/devel/best-practices/testing
 [commit]: https://docs.taskcluster.net/docs/manual/design/devel/best-practices/commits
-

@@ -20,10 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-var uuid = require('uuid');
+const uuid = require('uuid');
 
 /** @type {(bytes: Uint8Array) => string} */
-var toBase64 = (() => {
+const toBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (bytes) => Buffer.from(bytes).toString('base64');
   }
@@ -31,7 +31,7 @@ var toBase64 = (() => {
 })();
 
 /** @type {(base64: string) => Uint8Array | Buffer} */
-var fromBase64 = (() => {
+const fromBase64 = (() => {
   if (typeof Buffer !== 'undefined') {
     return (base64) => Buffer.from(base64, 'base64');
   }
@@ -43,9 +43,9 @@ var fromBase64 = (() => {
  * slug or a "nice" slug.
  */
 exports.encode = function(uuid_) {
-  var bytes   = uuid.parse(uuid_);
-  var base64 = toBase64(bytes);
-  var slug = base64
+  const bytes   = uuid.parse(uuid_);
+  const base64 = toBase64(bytes);
+  const slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
               .substring(0, 22);    // Drop '==' padding
@@ -56,7 +56,7 @@ exports.encode = function(uuid_) {
  * Returns the uuid represented by the given v4 or "nice" slug
  */
 exports.decode = function(slug) {
-  var base64 = slug
+  const base64 = slug
                   .replace(/-/g, '+')
                   .replace(/_/g, '/')
                   + '==';
@@ -67,9 +67,9 @@ exports.decode = function(slug) {
  * Returns a randomly generated uuid v4 compliant slug
  */
 exports.v4 = function() {
-  var bytes   = uuid.v4(null, new Uint8Array(16));
-  var base64 = toBase64(bytes);
-  var slug = base64
+  const bytes   = uuid.v4(null, new Uint8Array(16));
+  const base64 = toBase64(bytes);
+  const slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
               .substring(0, 22);    // Drop '==' padding
@@ -88,10 +88,10 @@ exports.v4 = function() {
  * restrict the range of potential uuids that may be generated.
  */
 exports.nice = function() {
-  var bytes   = uuid.v4(null, new Uint8Array(16));
+  const bytes   = uuid.v4(null, new Uint8Array(16));
   bytes[0] = bytes[0] & 0x7f;  // unset first bit to ensure [A-Za-f] first char
-  var base64 = toBase64(bytes);
-  var slug = base64
+  const base64 = toBase64(bytes);
+  const slug = base64
               .replace(/\+/g, '-')  // Replace + with - (see RFC 4648, sec. 5)
               .replace(/\//g, '_')  // Replace / with _ (see RFC 4648, sec. 5)
               .substring(0, 22);    // Drop '==' padding
