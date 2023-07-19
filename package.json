@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "test": "nodeunit slugid_test.js",
-    "test-nobuffer": "NO_BUFFER=1 npm test"
+    "test-nobuffer": "NO_BUFFER=1 yarn test"
   },
   "repository": {
     "type": "git",
@@ -17,13 +17,12 @@
     "url": "https://github.com/taskcluster/slugid/issues"
   },
   "engines": {
-    "node": ">=6.0"
+    "node": ">=14"
   },
   "dependencies": {
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "browserify": "5.9.1",
-    "nodeunit": "^0.11.2"
+    "nodeunit": "^0.11.3"
   }
 }

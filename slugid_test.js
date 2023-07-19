@@ -26,8 +26,8 @@ if (process.env.NO_BUFFER === "1") {
   console.log('\x1b[33m' + 'Removed `Buffer` from globalThis.' + '\x1b[0m');
 }
 
-var slugid = require('./slugid');
-var uuidv4 = require('uuid').v4;
+const slugid = require('./slugid');
+const uuidv4 = require('uuid').v4;
 
 /**
  * Test that we can correctly encode a "non-nice" uuid (with first bit set) to
@@ -40,11 +40,11 @@ exports.encodeTest = function(test) {
   // 10000000010011110011111111001000110111111100101101001011000001101000100111111011101011101111101011010101111000011000011101010100....
   // <8 ><0 ><4 ><f ><3 ><f ><c ><8 ><d ><f ><c ><b ><4 ><b ><0 ><6 ><8 ><9 ><f ><b ><a ><e ><f ><a ><d ><5 ><e ><1 ><8 ><7 ><5 ><4 >
   // < g  >< E  >< 8  >< _  >< y  >< N  >< _  >< L  >< S  >< w  >< a  >< J  >< -  >< 6  >< 7  >< 6  >< 1  >< e  >< G  >< H  >< V  >< A  >
-  var uuid_ = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
-  var expectedSlug = "gE8_yN_LSwaJ-6761eGHVA";
+  const uuid_ = '804f3fc8-dfcb-4b06-89fb-aefad5e18754';
+  const expectedSlug = "gE8_yN_LSwaJ-6761eGHVA";
 
   // Encode
-  var actualSlug = slugid.encode(uuid_);
+  const actualSlug = slugid.encode(uuid_);
 
   // Test that it encoded correctly
   test.ok(expectedSlug == actualSlug, "UUID not correctly encoded into slug: '" + expectedSlug + "' != '" + actualSlug + "'");
@@ -62,11 +62,11 @@ exports.decodeTest = function(test) {
   // 11111011111011111011111011111011111011111011111001000011111011111011111111111111111111111111111111111111111111111111111111111101....
   // <f ><b ><e ><f ><b ><e ><f ><b ><e ><f ><b ><e ><4 ><3 ><e ><f ><b ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><f ><d >
   // < -  >< -  >< -  >< -  >< -  >< -  >< -  >< -  >< Q  >< -  >< -  >< -  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< _  >< Q  >
-  var slug = '--------Q--__________Q';
-  var expectedUuid = "fbefbefb-efbe-43ef-bfff-fffffffffffd";
+  const slug = '--------Q--__________Q';
+  const expectedUuid = "fbefbefb-efbe-43ef-bfff-fffffffffffd";
 
   // Decode
-  var actualUuid = slugid.decode(slug);
+  const actualUuid = slugid.decode(slug);
 
   // Test that it is decoded correctly
   test.ok(expectedUuid == actualUuid, "Slug not correctly decoded into uuid: '" + expectedUuid + "' != '" + actualUuid + "'");
@@ -80,12 +80,12 @@ exports.decodeTest = function(test) {
 exports.uuidEncodeDecodeTest = function(test) {
   test.expect(100);
 
-  for (i = 0; i < 100; i++) {
+  for (let i = 0; i < 100; i++) {
     // Generate uuid
-    var uuid_ = uuidv4();
+    const uuid_ = uuidv4();
 
     // Encode
-    var slug = slugid.encode(uuid_);
+    const slug = slugid.encode(uuid_);
 
     // Test that decode uuid matches original
     test.ok(slugid.decode(slug) == uuid_, "Encode and decode isn't identity");
@@ -100,15 +100,15 @@ exports.uuidEncodeDecodeTest = function(test) {
 exports.slugDecodeEncodeTest = function(test) {
   test.expect(100);
 
-  for (i = 0; i < 100; i++) {
+  for (let i = 0; i < 100; i++) {
     // Generate slug
-    var slug1 = slugid.v4();
+    const slug1 = slugid.v4();
 
     // Decode
-    var uuid_ = slugid.decode(slug1);
+    const uuid_ = slugid.decode(slug1);
 
     // Encode
-    var slug2 = slugid.encode(uuid_);
+    const slug2 = slugid.encode(uuid_);
 
     // Test that decode uuid matches original
     test.ok(slug1 == slug2, "Decode and encode isn't identity");
@@ -156,16 +156,16 @@ exports.slugDecodeEncodeTest = function(test) {
  * => $F in {A, Q, g, w} (0bxx0000)
  */
 exports.niceSpreadTest = function(test) {
-  var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
+  const charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
   // 0 - 31: 0b0xxxxx
-  var charsC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef".split('').sort().join('');
+  const charsC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef".split('').sort().join('');
   // 16, 17, 18, 19: 0b0100xx
-  var charsD = "QRST".split('').sort().join('');
+  const charsD = "QRST".split('').sort().join('');
   // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: 0bxxxx10
-  var charsE = "CGKOSWaeimquy26-".split('').sort().join('');
+  const charsE = "CGKOSWaeimquy26-".split('').sort().join('');
   // 0, 16, 32, 48: 0bxx0000
-  var charsF = "AQgw".split('').sort().join('');
-  expected = [charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
+  const charsF = "AQgw".split('').sort().join('');
+  const expected = [charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
   spreadTest(
     test,
     function() {
@@ -181,14 +181,14 @@ exports.niceSpreadTest = function(test) {
  * the base64 characters since the first six bits of the uuid are random.
  */
 exports.v4SpreadTest = function(test) {
-  var charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
+  const charsAll = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split('').sort().join('');
   // 16, 17, 18, 19: 0b0100xx
-  var charsD = "QRST".split('').sort().join('');
+  const charsD = "QRST".split('').sort().join('');
   // 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62: 0bxxxx10
-  var charsE = "CGKOSWaeimquy26-".split('').sort().join('');
+  const charsE = "CGKOSWaeimquy26-".split('').sort().join('');
   // 0, 16, 32, 48: 0bxx0000
-  var charsF = "AQgw".split('').sort().join('');
-  expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
+  const charsF = "AQgw".split('').sort().join('');
+  const expected = [charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF];
   spreadTest(
     test,
     function() {
@@ -211,7 +211,7 @@ function spreadTest(test, generator, expected) {
   // a property for each character found, where the value of that property is
   // the number of times that character appeared at that position in the slugid
   // in the large sample of slugids generated in this test.
-  var k = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
+  let k = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
 
   test.expect(1);
 
@@ -219,9 +219,9 @@ function spreadTest(test, generator, expected) {
   // where...  A monte-carlo test has demonstrated that with 64 * 20
   // iterations, no failure occurred in 1000 simulations, so 64 * 40 should be
   // suitably large to rule out false positives.
-  for (i = 0; i < 64 * 40; i++) {
-    var slug = generator();
-    for (j = 0; j < slug.length; j++) {
+  for (let i = 0; i < 64 * 40; i++) {
+    let slug = generator();
+    for (let j = 0; j < slug.length; j++) {
       if (k[j][slug.charAt(j)] === undefined) {
         k[j][slug.charAt(j)] = 1
       } else {
@@ -231,13 +231,13 @@ function spreadTest(test, generator, expected) {
   }
 
   // Compose results into an array `actual`, for comparison with `expected`
-  var actual = [];
-  for (j = 0; j < k.length; j++) {
-    a = Object.keys(k[j])
+  let actual = [];
+  for (let j = 0; j < k.length; j++) {
+    const a = Object.keys(k[j])
     actual[j] = ""
-    for (x = 0; x < a.length; x++) {
-      if (k[j][a[x]] > 0) {
-        actual[j] += a[x]
+    for (const el of a) {
+      if (k[j][el] > 0) {
+        actual[j] += el
       }
     }
     // sort for easy comparison
@@ -255,7 +255,7 @@ function arraysEqual(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;
   if (a.length != b.length) return false;
-  for (var i = 0; i < a.length; ++i) {
+  for (let i = 0; i < a.length; ++i) {
     if (a[i] !== b[i]) return false;
   }
   return true;

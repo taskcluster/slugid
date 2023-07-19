@@ -12,30 +12,21 @@ tasks:
       then: ${event.pull_request.head.repo.html_url}
       else: ${event.repository.html_url}
     environments:
-      - image: node:6
-        description: Run tests with node v6
-        command: npm test
-      - image: node:8
-        description: Run tests with node v8
-        command: npm test
-      - image: node:10
-        description: Run tests with node v10
-        command: npm test
-      - image: node:12
-        description: Run tests with node v12
-        command: npm test
       - image: node:14
         description: Run tests with node v14
-        command: npm test
+        command: yarn test
       - image: node:16
         description: Run tests with node v16
-        command: npm test
+        command: yarn test
+      - image: node:18
+        description: Run tests with node v18
+        command: yarn test
       - image: node:latest
         description: Run tests with latest node
-        command: npm test
+        command: yarn test
       - image: node:latest
         description: Run tests with latest node without Buffer
-        command: npm run test-nobuffer
+        command: yarn run test-nobuffer
   in:
     $if: tasks_for == "github-pull-request" && event["action"] in ["opened","reopened","synchronize"]
     then:
@@ -61,10 +52,10 @@ tasks:
               set -o xtrace &&
               git --version &&
               node -v &&
-              npm -v &&
+              yarn -v &&
               git clone --no-progress ${repository} repo &&
               cd repo &&
               git config advice.detachedHead false &&
               git checkout --no-progress ${head_rev} &&
-              npm install --no-progress . &&
+              yarn install &&
               ${env.command}
