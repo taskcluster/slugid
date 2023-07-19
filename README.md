@@ -48,22 +48,22 @@ RFC 4122 defines the setting of 6 bits of the v4 UUID which determines these
 regular expressions.
 
 ```js
-var slugid = require('slugid');
+const slugid = require('slugid');
 
 // Generate "nice" URL-safe base64 encoded UUID version 4 (random)
-var slug = slugid.nice(); // a8_YezW8T7e1jLxG7evy-A
+const slug = slugid.nice(); // a8_YezW8T7e1jLxG7evy-A
 ```
 
 Encode / Decode
 ---------------
 ```js
-var slugid = require('slugid');
+const slugid = require('slugid');
 
 // Generate URL-safe base64 encoded UUID version 4 (random)
-var slug = slugid.v4();
+const slug = slugid.v4();
 
 // Get UUID on the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-var uuid = slugid.decode(slug);
+const uuid = slugid.decode(slug);
 
 // Compress to slug again
 assert(slug == slugid.encode(uuid));
