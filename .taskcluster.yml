@@ -12,12 +12,6 @@ tasks:
       then: ${event.pull_request.head.repo.html_url}
       else: ${event.repository.html_url}
     environments:
-      - image: node:14
-        description: Run tests with node v14
-        command: yarn test
-      - image: node:16
-        description: Run tests with node v16
-        command: yarn test
       - image: node:18
         description: Run tests with node v18
         command: yarn test
