@@ -17,7 +17,7 @@
     "url": "https://github.com/taskcluster/slugid/issues"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "dependencies": {
     "uuid": "^9.0.0"
