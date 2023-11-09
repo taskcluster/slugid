@@ -4,6 +4,10 @@
   "author": "Jonas Finnemann Jensen <jopsen@gmail.com>",
   "description": "URL-safe base64 UUID encoder for generating 22 character slugs",
   "license": "MIT",
+  "main": "./src/index.js",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "test": "mocha",
     "test-nobuffer": "NO_BUFFER=1 yarn test"
