@@ -24,7 +24,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "uuid": "^9.0.0"
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "mocha": "^10.2.0"
