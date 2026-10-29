@@ -26,12 +26,12 @@ tasks:
     then:
       $map: {$eval: environments}
       each(env):
-        taskId: {$eval: as_slugid(env.image + ":tests")}
+        taskId: {$eval: as_slugid(env.image + ":" + env.command)}
         deadline:
           $fromNow: 1 day
         taskQueueId: proj-taskcluster/ci
         metadata:
-          name: ${env.image} tests
+          name: ${env.description}
           description: ${env.description}
           owner: ${event.sender.login}@users.noreply.github.com
           source: ${event.repository.url}
