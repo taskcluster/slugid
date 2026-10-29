@@ -46,6 +46,7 @@ tasks:
               set -o xtrace &&
               git --version &&
               node -v &&
+              (command -v yarn || npm install -g yarn) &&
               yarn -v &&
               git clone --no-progress ${repository} repo &&
               cd repo &&
