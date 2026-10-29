@@ -12,8 +12,8 @@ tasks:
       then: ${event.pull_request.head.repo.html_url}
       else: ${event.repository.html_url}
     environments:
-      - image: node:18
-        description: Run tests with node v18
+      - image: node:22
+        description: Run tests with node v22
         command: yarn test
       - image: node:latest
         description: Run tests with latest node
@@ -26,12 +26,12 @@ tasks:
     then:
       $map: {$eval: environments}
       each(env):
-        taskId: {$eval: as_slugid(env.image + ":tests")}
+        taskId: {$eval: as_slugid(env.image + ":" + env.command)}
         deadline:
           $fromNow: 1 day
         taskQueueId: proj-taskcluster/ci
         metadata:
-          name: ${env.image} tests
+          name: ${env.description}
           description: ${env.description}
           owner: ${event.sender.login}@users.noreply.github.com
           source: ${event.repository.url}
@@ -46,6 +46,7 @@ tasks:
               set -o xtrace &&
               git --version &&
               node -v &&
+              (command -v yarn || npm install -g yarn) &&
               yarn -v &&
               git clone --no-progress ${repository} repo &&
               cd repo &&
